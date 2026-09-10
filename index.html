@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REWEK — Jesko Absolut</title>
+    <style>
+        :root {
+            --bg: #030304;
+            --accent: #ffffff;
+            --muted: #a1a1aa;
+            --border: rgba(255, 255, 255, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--accent);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* Контейнер фонов */
+        .bg-container {
+            position: fixed;
+            top: 2vh;
+            left: 2vw;
+            width: 96vw;
+            height: 96vh;
+            border-radius: 8px;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        /* Слои фоновых изображений для каждого слайда */
+        .bg-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: cover;
+            opacity: 0;
+            transform: scale(1.04);
+            transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), 
+                        transform 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+            image-rendering: -webkit-optimize-contrast;
+            filter: brightness(0.95) contrast(1.1) saturate(1.05);
+        }
+
+        /* Активный фон */
+        .bg-slide.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Кнопка на лобовом стекле (только для 2-го слайда) */
+        .windshield-btn {
+            position: fixed;
+            top: 40%;
+            left: calc(58% + 6cm);
+            transform: translate(-50%, -50%);
+            background: rgba(10, 10, 14, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            color: #fff;
+            padding: 0.6rem 1.2rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            cursor: pointer;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+        }
+
+        .windshield-btn.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .windshield-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: #fff;
+            transform: translate(-50%, -50%) scale(1.06);
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.4);
+        }
+
+        .btn-dot {
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #fff;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 15px #fff; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+
+        /* Окно с фото и описанием двигателя */
+        .floating-photo-modal {
+            position: fixed;
+            top: 50%;
+            right: 5vw;
+            transform: translateY(-50%) scale(0.95);
+            width: 42vw;
+            max-width: 650px;
+            background: rgba(10, 10, 14, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 1.2rem;
+            z-index: 6;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
+            text-align: center;
+        }
+
+        .floating-photo-modal.visible {
+            opacity: 1;
+            transform: translateY(-50%) scale(1);
+            pointer-events: auto;
+        }
+
+        .floating-photo-modal img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            display: block;
+            image-rendering: -webkit-optimize-contrast;
+            filter: contrast(1.1) brightness(1.05);
+        }
+
+        .engine-caption {
+            margin-top: 0.9rem;
+            font-size: 0.85rem;
+            letter-spacing: 0.18em;
+            color: #ffffff;
+            text-transform: uppercase;
+            font-weight: 300;
+        }
+
+        .close-photo-btn {
+            position: absolute;
+            top: -12px;
+            right: -12px;
+            background: var(--accent);
+            color: var(--bg);
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            transition: background 0.3s ease;
+        }
+
+        .close-photo-btn:hover {
+            background: var(--muted);
+        }
+
+        /* Выдвижная черная колонка */
+        .content-column {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 450px;
+            height: 100vh;
+            background-color: var(--bg);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 3.5rem;
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+            transform: translateX(0);
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 20px 0 50px rgba(0, 0, 0, 0.8);
+        }
+
+        .content-column.collapsed {
+            transform: translateX(-100%);
+        }
+
+        .toggle-handle {
+            position: absolute;
+            top: 50%;
+            right: -48px;
+            transform: translateY(-50%);
+            width: 48px;
+            height: 100px;
+            background-color: var(--bg);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-left: none;
+            border-radius: 0 8px 8px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--accent);
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            writing-mode: vertical-rl;
+            text-transform: uppercase;
+            user-select: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .toggle-handle:hover {
+            background-color: #0d0d11;
+        }
+
+        .sections-wrapper {
+            position: relative;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .section {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%) translateY(30px);
+            left: 0;
+            width: 100%;
+            opacity: 0;
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
+        }
+
+        .section.active {
+            opacity: 1;
+            transform: translateY(-50%) translateY(0);
+            pointer-events: auto;
+        }
+
+        .scroll-container {
+            height: 300vh;
+            position: relative;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        h1, h2 {
+            font-weight: 200;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+        }
+
+        h2 {
+            font-size: 2.3rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .sub-stat {
+            font-size: 1.6rem;
+            margin-top: 0.2rem;
+            color: var(--muted);
+        }
+
+        p {
+            color: var(--muted);
+            font-size: 0.85rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            line-height: 1.5;
+            margin-top: 0.6rem;
+        }
+
+        /* Стильная белая кнопка для Discord */
+        .btn {
+            margin-top: 1.2rem;
+            background: var(--accent);
+            color: var(--bg);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            padding: 0.8rem 2.2rem;
+            font-size: 0.7rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            display: inline-block;
+            font-weight: 500;
+            border-radius: 4px;
+            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.15);
+        }
+
+        .btn:hover {
+            background: transparent;
+            color: #ffffff;
+            border-color: #ffffff;
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Многослойный фоновый контейнер с эффектом перетекания -->
+    <div class="bg-container">
+        <!-- Слайд 1 -->
+        <div class="bg-slide active" style="background-image: url('https://koenigsegg-cdn-g7eehhd6f0ewcaff.z02.azurefd.net/drupal/styles/575x825/azure/2022-05/Stream_3%20copy.png?h=0a9494c3&itok=hFmV2SmV');"></div>
+        <!-- Слайд 2 -->
+        <div class="bg-slide" style="background-image: url('https://www.avito.st/static/b2b-hub/images/nKqgDQBz23zJ5cgQLoUmu4Bbx2td98XNS5Ze6V3o.jpg');"></div>
+        <!-- Слайд 3 -->
+        <div class="bg-slide" style="background-image: url('https://avatars.mds.yandex.net/i?id=2b6dc6f783811fac0915560724047f20_l-5328534-images-thumbs&n=13');"></div>
+    </div>
+
+    <button class="windshield-btn" id="windshieldBtn" title="Открыть двигатель V8">
+        <span class="btn-dot"></span>
+        <span>V8 Engine</span>
+    </button>
+
+    <div class="floating-photo-modal" id="engineModal">
+        <button class="close-photo-btn" id="closeModalBtn">✕</button>
+        <img src="https://www.supervettura.com/images/Koenigsegg/jesko-engine.jpg" alt="Двигатель V8 Koenigsegg Jesko">
+        <div class="engine-caption">5,0 Литр Koenigsegg Twin-turbo V8</div>
+    </div>
+
+    <div class="content-column" id="sidebar">
+        <div class="toggle-handle" id="toggleBtn">
+            <span id="btnText">HIDE ✕</span>
+        </div>
+
+        <div class="sections-wrapper">
+            <!-- Слайд 1 (index 0) -->
+            <section class="section active" data-index="0">
+                <h1>REWEK</h1>
+                <p>Карбоновая версия • Абсолютная аэродинамика</p>
+            </section>
+
+            <!-- Слайд 2 (index 1) -->
+            <section class="section" data-index="1">
+                <h2>1600 Л.С.</h2>
+                <div class="sub-stat">330+ MPH</div>
+                <p>Двигатель V8 с двойным турбонаддувом и ультранизкий аэродинамический профиль для преодоления границ скорости.</p>
+            </section>
+
+            <!-- Слайд 3 (index 2) -->
+            <section class="section" data-index="2">
+                <h2>My Discord</h2>
+                <p>Стань частью закрытой сети. Подключайся к Discord для доступа к эксклюзивным релизам.</p>
+                <a href="https://discord.com/invite/5tNqq84Uk" target="_blank" class="btn">Discord</a>
+            </section>
+        </div>
+    </div>
+
+    <div class="scroll-container"></div>
+
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const toggleBtn = document.getElementById('toggleBtn');
+        const btnText = document.getElementById('btnText');
+        const bgSlides = document.querySelectorAll('.bg-slide');
+
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            if (sidebar.classList.contains('collapsed')) {
+                btnText.textContent = 'INFO ☰';
+            } else {
+                btnText.textContent = 'HIDE ✕';
+            }
+        });
+
+        const windshieldBtn = document.getElementById('windshieldBtn');
+        const engineModal = document.getElementById('engineModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+
+        windshieldBtn.addEventListener('click', () => {
+            engineModal.classList.add('visible');
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+            engineModal.classList.remove('visible');
+        });
+
+        const sections = document.querySelectorAll('.section');
+        const totalSections = sections.length;
+
+        // Обработка прокрутки
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollFraction = scrollTop / maxScroll;
+            
+            let currentIndex = Math.floor(scrollFraction * totalSections);
+            if (currentIndex >= totalSections) currentIndex = totalSections - 1;
+
+            // Переключение текста слева
+            sections.forEach((section, index) => {
+                if (index === currentIndex) {
+                    section.classList.add('active');
+                } else {
+                    section.classList.remove('active');
+                }
+            });
+
+            // Плавное перетекание фонов (Crossfade)
+            bgSlides.forEach((slide, index) => {
+                if (index === currentIndex) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+
+            // Показываем кнопку V8 ENGINE только во второй секции (index = 1)
+            if (currentIndex === 1) {
+                windshieldBtn.classList.add('visible');
+            } else {
+                windshieldBtn.classList.remove('visible');
+                engineModal.classList.remove('visible');
+            }
+        });
+    </script>
+</body>
+</html>
