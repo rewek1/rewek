@@ -70,6 +70,7 @@
             transform: translate(-50%, -50%);
             background: rgba(10, 10, 14, 0.75);
             backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.35);
             color: #fff;
             padding: 0.6rem 1.2rem;
@@ -125,10 +126,11 @@
             max-width: 650px;
             background: rgba(10, 10, 14, 0.85);
             backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 12px;
             padding: 1.2rem;
-            z-index: 6;
+            z-index: 20;
             opacity: 0;
             pointer-events: none;
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -145,6 +147,8 @@
         .floating-photo-modal img {
             width: 100%;
             height: auto;
+            max-height: 70vh;
+            object-fit: cover;
             border-radius: 8px;
             display: block;
             image-rendering: -webkit-optimize-contrast;
@@ -295,7 +299,7 @@
             margin-top: 0.6rem;
         }
 
-        /* Стильная белая кнопка для Discord */
+        /* Кнопка Discord */
         .btn {
             margin-top: 1.2rem;
             background: var(--accent);
@@ -321,6 +325,22 @@
             box-shadow: 0 0 25px rgba(255, 255, 255, 0.3);
             transform: translateY(-2px);
         }
+
+        /* Адаптивность для экранов меньше 768px */
+        @media (max-width: 768px) {
+            .content-column {
+                width: 85vw;
+                padding: 0 1.8rem;
+            }
+            .floating-photo-modal {
+                width: 90vw;
+                right: 5vw;
+            }
+            .windshield-btn {
+                left: 50%;
+                top: 30%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -340,9 +360,11 @@
         <span>V8 Engine</span>
     </button>
 
+    <!-- Окно с фото killa -->
     <div class="floating-photo-modal" id="engineModal">
         <button class="close-photo-btn" id="closeModalBtn">✕</button>
-        <img src="https://www.supervettura.com/images/Koenigsegg/jesko-engine.jpg" alt="Двигатель V8 Koenigsegg Jesko">
+        <!-- Фото killa с автоматическим переключением между .jpg и .png -->
+        <img src="killa.jpg" alt="Двигатель V8 Koenigsegg Jesko" onerror="this.onerror=null; this.src='killa.png';">
         <div class="engine-caption">5,0 Литр Koenigsegg Twin-turbo V8</div>
     </div>
 
@@ -368,7 +390,7 @@
             <!-- Слайд 3 (index 2) -->
             <section class="section" data-index="2">
                 <h2>My Discord</h2>
-                <p>Стань частью закрытой сети. Подключайся к Discord. </p>
+                <p>Стань частью закрытой сети. Подключайся к Discord.</p>
                 <a href="https://discord.com/users/1347262134098198641" target="_blank" class="btn">Discord</a>
             </section>
         </div>
@@ -395,12 +417,26 @@
         const engineModal = document.getElementById('engineModal');
         const closeModalBtn = document.getElementById('closeModalBtn');
 
-        windshieldBtn.addEventListener('click', () => {
+        windshieldBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
             engineModal.classList.add('visible');
         });
 
         closeModalBtn.addEventListener('click', () => {
             engineModal.classList.remove('visible');
+        });
+
+        // Закрытие модального окна по клику вне его и по кнопке Esc
+        document.addEventListener('click', (e) => {
+            if (engineModal.classList.contains('visible') && !engineModal.contains(e.target) && e.target !== windshieldBtn) {
+                engineModal.classList.remove('visible');
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                engineModal.classList.remove('visible');
+            }
         });
 
         const sections = document.querySelectorAll('.section');
@@ -410,10 +446,11 @@
         window.addEventListener('scroll', () => {
             const scrollTop = window.scrollY;
             const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-            const scrollFraction = scrollTop / maxScroll;
+            let scrollFraction = maxScroll > 0 ? scrollTop / maxScroll : 0;
             
             let currentIndex = Math.floor(scrollFraction * totalSections);
             if (currentIndex >= totalSections) currentIndex = totalSections - 1;
+            if (currentIndex < 0) currentIndex = 0;
 
             // Переключение текста слева
             sections.forEach((section, index) => {
