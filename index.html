@@ -1,4 +1,4 @@
-\<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -250,7 +250,7 @@
         }
 
         .scroll-container {
-            height: 400vh; /* Увеличено до 400vh для 4 слайдов */
+            height: 400vh;
             position: relative;
             z-index: 3;
             pointer-events: none;
@@ -321,7 +321,7 @@
         <!-- Слайд 2: Jesko Specs -->
         <div class="bg-slide" style="background-image: url('https://www.avito.st/static/b2b-hub/images/nKqgDQBz23zJ5cgQLoUmu4Bbx2td98XNS5Ze6V3o.jpg');"></div>
         
-        <!-- Слайд 3: KILLA (Локальное фото killa.png) -->
+        <!-- Слайд 3: KILLA -->
         <div class="bg-slide" style="background-image: url('killa.png');"></div>
         
         <!-- Слайд 4: Discord -->
@@ -334,7 +334,7 @@
         <span>V8 Engine</span>
     </button>
 
-    <!-- Окно с двигателем V8 Koenigsegg (Вернули оригинал) -->
+    <!-- Окно с двигателем V8 Koenigsegg -->
     <div class="floating-photo-modal" id="engineModal">
         <button class="close-photo-btn" id="closeModalBtn">✕</button>
         <img src="https://images.fastly.net.cn/auto/202003/03/1583234551785186.jpg" alt="Двигатель Koenigsegg V8">
@@ -362,8 +362,9 @@
 
             <!-- Слайд 3: KILLA -->
             <section class="section" data-index="2">
-                <h2>KILLA</h2>
-                <p>Эксклюзивный стиль и бесскомпромиссный характер.</p>
+                <h2>ЛУЧШАЯ СЕМЬЯ....</h2>
+                <p>только FIB</p>
+                <a href="https://discord.gg/killagang" target="_blank" class="btn">KILLA</a>
             </section>
 
             <!-- Слайд 4: DISCORD -->
@@ -431,7 +432,6 @@
                 slide.classList.toggle('active', index === currentIndex);
             });
 
-            // Кнопка модального окна видна только на 2-м слайде (index === 1)
             if (currentIndex === 1) {
                 windshieldBtn.classList.add('visible');
             } else {
