@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+\<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -38,7 +38,7 @@
             z-index: 1;
         }
 
-        /* Слои фоновых изображений для каждого слайда */
+        /* Слои фоновых изображений */
         .bg-slide {
             position: absolute;
             top: 0;
@@ -56,13 +56,12 @@
             filter: brightness(0.95) contrast(1.1) saturate(1.05);
         }
 
-        /* Активный фон */
         .bg-slide.active {
             opacity: 1;
             transform: scale(1);
         }
 
-        /* Кнопка на лобовом стекле (только для 2-го слайда) */
+        /* Кнопка на лобовом стекле (2-й слайд) */
         .windshield-btn {
             position: fixed;
             top: 40%;
@@ -116,7 +115,7 @@
             100% { transform: scale(0.95); opacity: 0.8; }
         }
 
-        /* Окно с фото и описанием двигателя */
+        /* Окно двигателя Koenigsegg */
         .floating-photo-modal {
             position: fixed;
             top: 50%;
@@ -151,8 +150,6 @@
             object-fit: cover;
             border-radius: 8px;
             display: block;
-            image-rendering: -webkit-optimize-contrast;
-            filter: contrast(1.1) brightness(1.05);
         }
 
         .engine-caption {
@@ -181,14 +178,9 @@
             align-items: center;
             justify-content: center;
             box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-            transition: background 0.3s ease;
         }
 
-        .close-photo-btn:hover {
-            background: var(--muted);
-        }
-
-        /* Выдвижная черная колонка */
+        /* Выдвижная боковая колонка */
         .content-column {
             position: fixed;
             top: 0;
@@ -232,11 +224,6 @@
             writing-mode: vertical-rl;
             text-transform: uppercase;
             user-select: none;
-            transition: background-color 0.3s ease;
-        }
-
-        .toggle-handle:hover {
-            background-color: #0d0d11;
         }
 
         .sections-wrapper {
@@ -263,7 +250,7 @@
         }
 
         .scroll-container {
-            height: 300vh;
+            height: 400vh; /* Увеличено до 400vh для 4 слайдов */
             position: relative;
             z-index: 3;
             pointer-events: none;
@@ -275,14 +262,8 @@
             text-transform: uppercase;
         }
 
-        h1 {
-            font-size: 3.5rem;
-        }
-
-        h2 {
-            font-size: 2.3rem;
-            margin-bottom: 0.2rem;
-        }
+        h1 { font-size: 3.5rem; }
+        h2 { font-size: 2.3rem; margin-bottom: 0.2rem; }
 
         .sub-stat {
             font-size: 1.6rem;
@@ -299,7 +280,6 @@
             margin-top: 0.6rem;
         }
 
-        /* Кнопка Discord */
         .btn {
             margin-top: 1.2rem;
             background: var(--accent);
@@ -315,7 +295,6 @@
             display: inline-block;
             font-weight: 500;
             border-radius: 4px;
-            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.15);
         }
 
         .btn:hover {
@@ -326,46 +305,40 @@
             transform: translateY(-2px);
         }
 
-        /* Адаптивность для экранов меньше 768px */
         @media (max-width: 768px) {
-            .content-column {
-                width: 85vw;
-                padding: 0 1.8rem;
-            }
-            .floating-photo-modal {
-                width: 90vw;
-                right: 5vw;
-            }
-            .windshield-btn {
-                left: 50%;
-                top: 30%;
-            }
+            .content-column { width: 85vw; padding: 0 1.8rem; }
+            .floating-photo-modal { width: 90vw; right: 5vw; }
+            .windshield-btn { left: 50%; top: 30%; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Многослойный фоновый контейнер с эффектом перетекания -->
     <div class="bg-container">
-        <!-- Слайд 1 -->
+        <!-- Слайд 1: REWEK -->
         <div class="bg-slide active" style="background-image: url('https://koenigsegg-cdn-g7eehhd6f0ewcaff.z02.azurefd.net/drupal/styles/575x825/azure/2022-05/Stream_3%20copy.png?h=0a9494c3&itok=hFmV2SmV');"></div>
-        <!-- Слайд 2 -->
+        
+        <!-- Слайд 2: Jesko Specs -->
         <div class="bg-slide" style="background-image: url('https://www.avito.st/static/b2b-hub/images/nKqgDQBz23zJ5cgQLoUmu4Bbx2td98XNS5Ze6V3o.jpg');"></div>
-        <!-- Слайд 3 -->
+        
+        <!-- Слайд 3: KILLA (Локальное фото killa.png) -->
+        <div class="bg-slide" style="background-image: url('killa.png');"></div>
+        
+        <!-- Слайд 4: Discord -->
         <div class="bg-slide" style="background-image: url('https://avatars.mds.yandex.net/i?id=2b6dc6f783811fac0915560724047f20_l-5328534-images-thumbs&n=13');"></div>
     </div>
 
+    <!-- Кнопка двигателя для 2-го слайда -->
     <button class="windshield-btn" id="windshieldBtn" title="Открыть двигатель V8">
         <span class="btn-dot"></span>
         <span>V8 Engine</span>
     </button>
 
-    <!-- Окно с фото killa -->
+    <!-- Окно с двигателем V8 Koenigsegg (Вернули оригинал) -->
     <div class="floating-photo-modal" id="engineModal">
         <button class="close-photo-btn" id="closeModalBtn">✕</button>
-        <!-- Фото killa с автоматическим переключением между .jpg и .png -->
-        <img src="killa.jpg" alt="Двигатель V8 Koenigsegg Jesko" onerror="this.onerror=null; this.src='killa.png';">
-        <div class="engine-caption">5,0 Литр Koenigsegg Twin-turbo V8</div>
+        <img src="https://images.fastly.net.cn/auto/202003/03/1583234551785186.jpg" alt="Двигатель Koenigsegg V8">
+        <div class="engine-caption">5,0 Литр Twin-Turbo V8 — 1600 Л.С.</div>
     </div>
 
     <div class="content-column" id="sidebar">
@@ -374,21 +347,27 @@
         </div>
 
         <div class="sections-wrapper">
-            <!-- Слайд 1 (index 0) -->
+            <!-- Слайд 1 -->
             <section class="section active" data-index="0">
                 <h1>REWEK</h1>
                 <p>Hello • привет</p>
             </section>
 
-            <!-- Слайд 2 (index 1) -->
+            <!-- Слайд 2 -->
             <section class="section" data-index="1">
                 <h2>1600 Л.С.</h2>
                 <div class="sub-stat">330+ MPH</div>
                 <p>Двигатель V8 с двойным турбонаддувом и ультранизкий аэродинамический профиль для преодоления границ скорости.</p>
             </section>
 
-            <!-- Слайд 3 (index 2) -->
+            <!-- Слайд 3: KILLA -->
             <section class="section" data-index="2">
+                <h2>KILLA</h2>
+                <p>Эксклюзивный стиль и бесскомпромиссный характер.</p>
+            </section>
+
+            <!-- Слайд 4: DISCORD -->
+            <section class="section" data-index="3">
                 <h2>My Discord</h2>
                 <p>Стань частью закрытой сети. Подключайся к Discord.</p>
                 <a href="https://discord.com/users/1347262134098198641" target="_blank" class="btn">Discord</a>
@@ -406,11 +385,7 @@
 
         toggleBtn.addEventListener('click', () => {
             sidebar.classList.toggle('collapsed');
-            if (sidebar.classList.contains('collapsed')) {
-                btnText.textContent = 'INFO ☰';
-            } else {
-                btnText.textContent = 'HIDE ✕';
-            }
+            btnText.textContent = sidebar.classList.contains('collapsed') ? 'INFO ☰' : 'HIDE ✕';
         });
 
         const windshieldBtn = document.getElementById('windshieldBtn');
@@ -426,7 +401,6 @@
             engineModal.classList.remove('visible');
         });
 
-        // Закрытие модального окна по клику вне его и по кнопке Esc
         document.addEventListener('click', (e) => {
             if (engineModal.classList.contains('visible') && !engineModal.contains(e.target) && e.target !== windshieldBtn) {
                 engineModal.classList.remove('visible');
@@ -434,15 +408,12 @@
         });
 
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                engineModal.classList.remove('visible');
-            }
+            if (e.key === 'Escape') engineModal.classList.remove('visible');
         });
 
         const sections = document.querySelectorAll('.section');
         const totalSections = sections.length;
 
-        // Обработка прокрутки
         window.addEventListener('scroll', () => {
             const scrollTop = window.scrollY;
             const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
@@ -452,25 +423,15 @@
             if (currentIndex >= totalSections) currentIndex = totalSections - 1;
             if (currentIndex < 0) currentIndex = 0;
 
-            // Переключение текста слева
             sections.forEach((section, index) => {
-                if (index === currentIndex) {
-                    section.classList.add('active');
-                } else {
-                    section.classList.remove('active');
-                }
+                section.classList.toggle('active', index === currentIndex);
             });
 
-            // Плавное перетекание фонов (Crossfade)
             bgSlides.forEach((slide, index) => {
-                if (index === currentIndex) {
-                    slide.classList.add('active');
-                } else {
-                    slide.classList.remove('active');
-                }
+                slide.classList.toggle('active', index === currentIndex);
             });
 
-            // Показываем кнопку V8 ENGINE только во второй секции (index = 1)
+            // Кнопка модального окна видна только на 2-м слайде (index === 1)
             if (currentIndex === 1) {
                 windshieldBtn.classList.add('visible');
             } else {
